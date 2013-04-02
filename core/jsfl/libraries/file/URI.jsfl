@@ -718,7 +718,8 @@
 			 */
 			URI.isRoot = function(pathOrURI)
 			{
-				return pathOrURI != null ? /^([\w ]+[:|]\/?|\/)$/.test(String(URI.toPath(pathOrURI))) : false;
+				var path = FLfile.uriToPlatformPath(pathOrURI);
+				return pathOrURI != null ? /^([\w ]+[:|]\/?|\/)$/.test(path) : false;
 			}
 
 
