@@ -93,6 +93,11 @@
 				}
 				if ( type === 'number' || type === 'boolean' )
 				{
+    				if ( obj === Infinity || isNaN( obj ) )
+    				{
+    					return "\"" + obj + "\"";
+    				}
+                    
 					return '' + obj;
 				}
 				if ( type === 'string') {
