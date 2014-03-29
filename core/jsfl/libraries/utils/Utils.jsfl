@@ -2086,9 +2086,15 @@
 							{
 								if(FLfile.exists(uri))
 								{
-									var folder	= new Folder(uri);
-									var result	=  process(folder, 0);
-									uris.shift();
+                                    //var newFile = FLfile.getAttributes( uri ).indexOf( "D" ) >= 0 ? new Folder(uri) : new File(uri);
+                                    
+                                    var children = FLfile.listFolder( uri );
+                                    var newFile = children.length > 0 ? new Folder(uri) : new File(uri);
+                                    
+									//var folder	= new Folder(uri);
+									//var result	=  process(folder, 0);
+									var result = process(newFile, 0);
+                                    uris.shift();
 									return returnURIs ? uris : result;
 								}
 								throw new Error('Error in Utils.walkFolder(): The folder reference "' +folder+ '" does not exist')

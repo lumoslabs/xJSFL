@@ -1137,10 +1137,19 @@
 				 */
 				find:function(uri, init)
 				{
+                    xjsfl.output.trace( "fingind that shit");
 					// callback function to process files and folders
 						function processFile(element)
 						{
+                            xjsfl.output.trace( "process file " + element.uri);
+                            
+                            //eli - no idea what the hell is wrong where in xJSFL, but shit is mad broke...
+                            //instanceof Folder is true for EVERYTHING because everything is a Folder. The code
+                            //is insane so I'm unable to figure out why.
+                            //instead, use the actual way to checking whether or not something is a Folder
+                            
 							if(element instanceof Folder)
+                            //if ( FLfile.getAttributes( element.uri ).indexOf( "D" ) >= 0 )
 							{
 								// skip folders where manifests shouldn't be
 								if(/assets|config|docs|temp|ui/.test(element.name))
@@ -1314,7 +1323,7 @@
 						{
 							this.init(namespace);
 						}
-
+                        
 					// create module
 						try
 						{
