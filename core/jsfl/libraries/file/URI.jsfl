@@ -18,7 +18,7 @@
 	 */
 
 	xjsfl.init(this, ['Utils']);
-		
+
 	// ---------------------------------------------------------------------------------------------------------------
 	// notes on JSFL and xJSFL URI juggling
 
@@ -78,7 +78,7 @@
 		*/
 
 	// ---------------------------------------------------------------------------------------------------------------
-	// # URI Instance - Instantiatable class that can be used to easily create and manipulate URI strings 
+	// # URI Instance - Instantiatable class that can be used to easily create and manipulate URI strings
 
 		/**
 		 * URI Constructor
@@ -106,67 +106,67 @@
 				{
 					pathOrURI = Utils.getStack()[1].path;
 				}
-				
+
 			// update context
 				if(typeof context === 'number')
 				{
 					context ++;
 				}
-	
+
 			// assign URI
 				this.uri = URI.toURI(pathOrURI, context || 1);
 		}
 
 		URI.prototype =
 		{
-			
+
 			// --------------------------------------------------------------------------------
 			// # Properties
-			
+
 				constructor:URI,
-	
+
 				/** @type {String}	The file:/// URI of the URI instance (casting the URI object to a String gives the same result) */
 				uri:'',
-	
+
 				/** @type {String}	The folder path URI to the URI instance */
 				get folder()
 				{
 					return URI.getFolder(this.uri);
 				},
-	
+
 				/** @type {String}	The name of the file or folder referred to by the URI instance */
 				get name()
 				{
 					return URI.getName(this.uri);
 				},
-	
+
 				/** @type {String}	The name of the file or folder referred to by the URI instance */
 				get extension()
 				{
 					return URI.getExtension(this.uri);
 				},
-	
+
 				/** @type {String}	The platform-specific path of the file or folder referred to by the URI instance */
 				get path()
 				{
 					return URI.asPath(this.uri);
 				},
-	
+
 				/** @type {String}	The type of the URI, 'file' or 'folder' */
 				get type()
 				{
 					return URI.isFile(this.uri) ? 'file' : 'folder';
 				},
-	
+
 			// --------------------------------------------------------------------------------
 			// # Methods
-			
+
 				/** @type {URI}		The parent folder of the file or folder referred to by the URI instance */
 				getParent:function()
 				{
 					return new URI(URI.getParent(this.uri));
 				},
-	
+
 				/**
 				 * Returns a new URI that resolves to the target path or URI
 				 * @param	{String}	pathOrURI	The target URI, such as '../../'
@@ -176,7 +176,7 @@
 				{
 					return URI.pathTo(this.uri, pathOrURI);
 				},
-	
+
 				/**
 				 * The URI string of the URI instance
 				 * @returns	{String}				The string of the URI, i.e. file://path/to/file.txt
@@ -188,10 +188,10 @@
 		}
 
 	// ---------------------------------------------------------------------------------------------------------------
-	// # Static methods - a host of static utility functions that can be used to manipulate paths or URIs 
+	// # Static methods - a host of static utility functions that can be used to manipulate paths or URIs
 
 		// ---------------------------------------------------------------------------------------------------------------
-		// # Creation functions 
+		// # Creation functions
 
 			/**
 			 * Create an absolute URI from virtually any URI or path
@@ -223,10 +223,10 @@
 							{
 								throw new Error('ReferenceError in URI.toURI(): pathOrURI cannot be undefined')
 							}
-							
+
 						// get stack index
 							var stackIndex = typeof context === 'number' ? context + 1 : 1
-							
+
 						// if pathOrURI is true, grab the calling file
 							if(pathOrURI === true)
 							{
@@ -246,7 +246,7 @@
 						pathOrURI		= String(pathOrURI || '');
 						context			= context || 0;
 						checkLength 	= typeof checkLength === 'undefined' ? true : checkLength;
-						
+
 					// variables
 						var uri;
 						var root;
@@ -269,7 +269,7 @@
 
 							// debug
 								//trace('2 > URI       : ' + pathOrURI);
-									
+
 							// return immediately
 								return URI.tidy(pathOrURI);
 						}
@@ -281,7 +281,7 @@
 
 					// debug
 						//trace('3 > path      : ' + path);
-							
+
 				// ---------------------------------------------------------------------------------------------------------------
 				// handle absolute paths / notation, i.e. //, /, {placeholder}, Macintosh HD:, c:
 
@@ -300,7 +300,7 @@
 											root		= xjsfl.uri;
 											path		= path.substr(2);
 										break;
-	
+
 									// mac root folder
 										case '/':
 											// if Mac, set the root to '' as / signifies an absolute path to a root folder, or another drive root
@@ -309,14 +309,14 @@
 													root = '';
 													path = path.substr(1);
 												}
-											
+
 											// if PC, grab the root of the config URI
 												else
 												{
 													root = fl.configURI.substr(0, 10);
 												}
 										break;
-	
+
 									// placeholder folder
 										case '{':
 											var matches = path.match(/{(\w+)}/);
@@ -333,7 +333,7 @@
 												throw new URIError('Error in URI.toURI(): Unrecognised placeholder ' +matches[0]+ ' in path "' +path+ '"');
 											}
 										break;
-	
+
 									// drive, i.e., 'Macintosh HD:', 'C:'
 										default:
 											if(xjsfl.settings.app.os.mac)
@@ -346,21 +346,21 @@
 											}
 											path = '';
 								}
-								
+
 							// create uri if a root was found
 								if(root != null)
 								{
 									uri = root.replace(/\/+$/, '/') + path;
 								}
-	
+
 							// debug
 								//trace('4 > absolute  : ' + uri);
-								
+
 						}
 
 				// ---------------------------------------------------------------------------------------------------------------
 				// resolve relative tokens, i.e. resolve ./, ../, path/to/file.txt
-				
+
 					// if a URI isn't yet resolved, the path is relative, so we need to derive its context
 						if( ! uri )
 						{
@@ -368,15 +368,15 @@
 							// define root from context, i.e. get the starting location of the path reference
 
 								// context is a number
-								
+
 									/*
 										Now we're looking for relative paths, we need to work out the calling file.
 										This is done by getting the current stack (an Array) of function calls, and
 										working backwards.
-										
+
 										If there's no numeric context, that means we need to simply grab the URI of the
 										function that called this function, so we set a stackIndex of 1 (1 step back).
-										
+
 										If there is an existing numeric context, we need to add 1 to it, so that we
 										compensate for this function now being the top of the stack.
 									*/
@@ -393,19 +393,19 @@
 											throw new ReferenceError('ReferenceError in URI.toURI(): The supplied call stack index (context) ' + stackIndex + ' is out of bounds');
 										}
 									}
-									
+
 								// context is a File
 									else if(context instanceof File)
 									{
 										root = context.uri;
 									}
-									
+
 								// context is a Folder
 									else if(context instanceof Folder)
 									{
 										root = context.uri + '/';
 									}
-									
+
 								// convert context to a string, and try to convert it to a URI
 									else
 									{
@@ -419,10 +419,10 @@
 											root = URI.toURI(context);
 										}
 									}
-	
+
 							// ---------------------------------------------------------------------------------------------------------------
 							// check if a root was defined, and if so, derive the full URI
-							
+
 								if(root)
 								{
 									// check that path isn't absolute (or else it can't be resolved)
@@ -439,7 +439,7 @@
 								{
 									throw new URIError('Error in URI.toURI(): It is not possible to resolve the path "' +path+ '" as the context "' +context+ '" as is not a valid URI, File or Folder');
 								}
-								
+
 							// debug
 								//trace('5 > relative  : ' + uri);
 						}
@@ -455,7 +455,7 @@
 
 					// tidy drive letter
 						uri	= uri.replace(/^([a-z ]+):/i, '$1|');
-						
+
 					// check for leading /
 						if(uri[0] === '/' && uri[1] !== '/')
 						{
@@ -464,10 +464,10 @@
 
 					// tidy path
 						uri = URI.tidy(uri);
-						
-					// replace spaces with %20 
+
+					// replace spaces with %20
 						uri = uri.replace(/ /g, '%20');
-						
+
 					// add 'file:///'
 						uri = 'file:///' + uri;
 
@@ -502,39 +502,39 @@
 				// variables
 					var path;
 					var uri;
-					
+
 				// if absolute URI, we need some preprocessing
 					if(URI.isURI(pathOrURI))
 					{
 						// remove file:/// so it will get processed by URI.asPath()
 							uri = String(pathOrURI).substr(8);
-							
+
 						// tidy URI
 							uri = URI.tidy(uri);
 					}
-					
+
 				// parse all input via toURI()
 					else
 					{
 						uri = URI.toURI(pathOrURI, 1);
 					}
-					
+
 				// convert
 					path = URI.asPath(uri, shorten);
-					
+
 				// add leading slash for mac absolute paths
 					if(URI.isAbsolute(pathOrURI) && xjsfl.settings.app.os.mac)
 					{
 						path = '/' + path;
 					}
-				
+
 				// return result
 					return path;
 			}
 
 
 		// ---------------------------------------------------------------------------------------------------------------
-		// # Conversion functions 
+		// # Conversion functions
 
 			/**
 			 * Perform simple path to URI conversion
@@ -596,7 +596,7 @@
 			{
 				// convert to string
 					pathOrURI = String(pathOrURI);
-				
+
 				// return the {placeholder} version of registered URIs
 					if(shorten && URI.isURI(pathOrURI))
 					{
@@ -649,7 +649,7 @@
 
 
 		// ---------------------------------------------------------------------------------------------------------------
-		// # Testing functions 
+		// # Testing functions
 
 			/**
 			 * Test if the supplied value is a URI-formatted string
@@ -718,12 +718,13 @@
 			 */
 			URI.isRoot = function(pathOrURI)
 			{
-				return pathOrURI != null ? /^([\w ]+[:|]\/?|\/)$/.test(String(pathOrURI).replace('file:///', '')) : false;
+				var path = FLfile.uriToPlatformPath(pathOrURI);
+				return pathOrURI != null ? /^([\w ]+[:|]\/?|\/)$/.test(path) : false;
 			}
 
 
 		// ---------------------------------------------------------------------------------------------------------------
-		// # Extraction functions 
+		// # Extraction functions
 
 			/**
 			 * Returns the file or folder name of the item referenced by the path or URI (note names are unescaped)
@@ -747,7 +748,7 @@
 				var match = String(pathOrURI).match(/\.(\w+)$/);
 				return match ? match[1] : '';
 			}
-			
+
 			/**
 			 * Returns the current folder path of the item referenced by the path or URI
 			 * @param	{String}	pathOrURI	A valid path or URI
@@ -791,7 +792,7 @@
 					{
 						throw new URIError('URIError in URI.common(): both src and trg parameters must be either paths or URIs');
 					}
-				
+
 				// variables
 					var branch		= '';
 					var srcParts	= String(src).split('/');
@@ -803,7 +804,7 @@
 						srcParts.shift();
 						branch += trgParts.shift() + '/';
 					}
-					
+
 				// return
 					return branch === 'file:///' ? '' : branch;
 			}
@@ -819,7 +820,7 @@
 				// convert to Strings
 					src = String(src);
 					trg = String(trg);
-				
+
 				// throw error if src and trg are not both the same format
 					if(URI.isURI(src) && ! URI.isURI(trg))
 					{
@@ -835,14 +836,14 @@
 					{
 						trgPath = trg;
 					}
-					
+
 				// otherwise, determine relationship between srcURI and trgURI
 					else
 					{
 						// grab the remaining segments
 							var srcParts	= src.substr(branch.length).split('/');
 							var trgParts	= trg.substr(branch.length).split('/');
-							
+
 						// src is same level, so path will be 'trg.txt'
 							if(srcParts.length == 1 && trgParts.length == 1)
 							{
@@ -863,7 +864,7 @@
 				// return
 					return URI.asPath(trgPath);
 			}
-			
+
 			/**
 			 * Returns the path or URI truncated to the supplied folder name or path
 			 * @param	{String}	pathOrURI	A path or URI string
@@ -900,24 +901,24 @@
 					src		= URI.tidy(src);
 					trg		= URI.tidy(trg);
 					base	= URI.tidy(base);
-				
-				// if base is relative, 
+
+				// if base is relative,
 					if(base.indexOf('..') !== -1)
 					{
 						var folder = URI.getFolder(src);
 						base = URI.tidy(folder + base);
 					}
-					
+
 				// retarget
 					base	= URI.findFolder(src, base);
 					trg		= URI.getFolder(trg);
-					
+
 				// return
 					return trg + src.substr(base.length);
 			}
 
 		// ---------------------------------------------------------------------------------------------------------------
-		// # Utility functions 
+		// # Utility functions
 
 			URI.tidy = function(pathOrURI)
 			{
@@ -951,7 +952,7 @@
 							pathOrURI = pathOrURI.replace(/^([a-z ]+[:|])\/[.\/]+/img, '$1/');
 							//path = path.replace(/^\/\.\.\//img, '');
 					}
-					
+
 				// return
 					return protocol + pathOrURI;
 			}
