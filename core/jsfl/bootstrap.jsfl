@@ -125,15 +125,12 @@
 			
 		// --------------------------------------------------------------------------------
 		// attempt to load modules
-	
-        xjsfl.output.trace( "HEY THERE DOES THIS PRINT");
 			if(xjsfl.loading)
 			{
                 xjsfl.output.trace( "loading modules");
 				try
 				{
 					xjsfl.output.trace('initialising modules...', 1);
-                    xjsfl.output.trace( "does this get capitalized?",1);
 					xjsfl.modules.find(xjsfl.uri + 'modules/', true);
 				}
 				catch(error)
